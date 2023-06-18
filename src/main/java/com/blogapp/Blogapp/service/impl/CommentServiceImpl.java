@@ -25,8 +25,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Autowired
     private PostRepository postRepository;
+
     @Override
-    public CommentDto createComment(long postId , CommentDto commentDto) {
+    public CommentDto createComment(long postId, CommentDto commentDto) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ResourceNotFoundException("Post", "ID", postId)
         );
@@ -58,6 +59,28 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentDto> getCommentsByPostId(long postId) {
         List<Comment> commentList = commentRepository.findByPostId(postId);
-        return commentList.stream().map(posts->maptoCommentDto(posts)).collect(Collectors.toList());
+        return commentList.stream().map(posts -> maptoCommentDto(posts)).collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDto updateCommentByPostId(long postId, long id, CommentDto commentDto) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
+
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", id));
+
+        comment.setBody(commentDto.getBody());
+        comment.setName(commentDto.getName());
+        comment.setEmail(commentDto.getEmail());
+        commentRepository.save(comment);
+
+        return maptoCommentDto(comment);
+    }
+
+    @Override
+    public void deleteCommentByPostId(long postId, long id) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
+
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", id));
+        commentRepository.deleteById(id);
     }
 }

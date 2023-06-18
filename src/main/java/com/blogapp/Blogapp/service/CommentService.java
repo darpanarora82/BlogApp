@@ -10,4 +10,8 @@ public interface CommentService {
     public Comment maptoComment(CommentDto commentDto);
     public  CommentDto maptoCommentDto(Comment comment);
     List<CommentDto> getCommentsByPostId(long postId);
+
+    CommentDto updateCommentByPostId(long postId, long id, CommentDto commentDto);
+
+    void deleteCommentByPostId(long postId, long id);
 }
