@@ -11,13 +11,17 @@ import javafx.geometry.Pos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/posts")
+@CrossOrigin(origins = "http://localhost:4200")
 public class PostController {
 
     @Autowired
@@ -28,7 +32,10 @@ public class PostController {
 //    }
 
     @PostMapping("/createPost")
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto) {
+    public ResponseEntity<Object> createPost(@Valid @RequestBody PostDto postDto , BindingResult bindingResult) {
+        if(bindingResult.hasErrors()){
+            return new ResponseEntity<>(Objects.requireNonNull(bindingResult.getFieldError()). getDefaultMessage(), HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
 
@@ -57,7 +64,7 @@ public class PostController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteRecord(@PathVariable Long id) {
         postService.deleteById(id);
-        return new ResponseEntity<>("Post entity deleted successfully", HttpStatus.OK);
+        return new ResponseEntity<>("Post deleted successfully", HttpStatus.OK);
     }
 
     @GetMapping("/paging")

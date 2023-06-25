@@ -1,0 +1,42 @@
+resources:
+  - name: your-git-repo
+    type: git
+    source:
+      uri: <your-git-repo-url>
+      branch: <your-git-branch>
+
+jobs:
+  - name: build-and-deploy
+    plan:
+      - get: your-git-repo
+        trigger: true
+      - task: build
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: java, tag: openjdk-11}
+          inputs:
+            - name: your-git-repo
+          run:
+            path: sh
+            args:
+              - -exc
+              - |
+                cd your-git-repo
+                ./gradlew build
+      - task: deploy
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: alpine}
+          inputs:
+            - name: your-git-repo
+          run:
+            path: sh
+            args:
+              - -exc
+              - |
+                cd your-git-repo
+                java -jar build/libs/your-program.jar

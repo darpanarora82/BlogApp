@@ -7,6 +7,7 @@ import com.blogapp.Blogapp.payload.CommentDto;
 import com.blogapp.Blogapp.repository.CommentRepository;
 import com.blogapp.Blogapp.repository.PostRepository;
 import com.blogapp.Blogapp.service.CommentService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,8 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService {
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
 //    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository) {
 //        this.commentRepository = commentRepository;
@@ -39,21 +42,23 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment maptoComment(CommentDto commentDto) {
-        Comment comment = new Comment();
-        comment.setName(commentDto.getName());
-        comment.setEmail(commentDto.getEmail());
-        comment.setBody(commentDto.getBody());
-        return comment;
+        return modelMapper.map(commentDto , Comment.class);
+//        Comment comment = new Comment();
+//        comment.setName(commentDto.getName());
+//        comment.setEmail(commentDto.getEmail());
+//        comment.setBody(commentDto.getBody());
+//        return comment;
     }
 
     @Override
     public CommentDto maptoCommentDto(Comment comment) {
-        CommentDto commentDto = new CommentDto();
-        commentDto.setName(comment.getName());
-        commentDto.setBody(comment.getBody());
-        commentDto.setEmail(comment.getEmail());
-        commentDto.setId(comment.getId());
-        return commentDto;
+       return modelMapper.map(comment , CommentDto.class);
+//        CommentDto commentDto = new CommentDto();
+//        commentDto.setName(comment.getName());
+//        commentDto.setBody(comment.getBody());
+//        commentDto.setEmail(comment.getEmail());
+//        commentDto.setId(comment.getId());
+//        return commentDto;
     }
 
     @Override
